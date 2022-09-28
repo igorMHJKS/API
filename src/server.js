@@ -1,6 +1,8 @@
 require("express-async-errors");
 
-const AppError = require("./utils/AppError")
+const insdata = require("./database/sqlite");
+
+const AppError = require("./utils/AppError");
 
 const { response } = require("express");
 
@@ -12,6 +14,8 @@ const app = express();
 app.use(express.json());
 
 app.use(routes);
+
+insdata()
 
 //verificando se o error está do lado do cliente e devolve a resposta de acordo com error
 app.use = ((error, request, response, next ) =>{
