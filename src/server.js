@@ -1,6 +1,6 @@
 require("express-async-errors");
 
-const insdata = require("./database/sqlite");
+const migrationsRun = require("./database/sqlite/migrations");
 
 const AppError = require("./utils/AppError");
 
@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use(routes);
 
-insdata()
+migrationsRun()
 
 //verificando se o error está do lado do cliente e devolve a resposta de acordo com error
 app.use = ((error, request, response, next ) =>{
@@ -35,5 +35,5 @@ app.use = ((error, request, response, next ) =>{
     });
 });
 
-const port = 3000;
+const port = 3003;
 app.listen(port, () => console.log(`server is running on port ${port}`));
