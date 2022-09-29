@@ -27,12 +27,11 @@ app.use = ((error, request, response, next ) =>{
     }
 
     console.error()
-
-    //verificando se error está do lado do servidor
-    return response.status(500).json ({
-            status: "error",
-            message: error.message
-    });
+ //verificando se error está do lado do servidor
+ return response.status(500).json ({
+    status: "error",
+    message: error.message
+});
 });
 
 const port = 3003;
