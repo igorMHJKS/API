@@ -1,3 +1,4 @@
+const nodemon = require("nodemon");
 const knex = require("../database/knex");
 
 class NotesController {
@@ -62,13 +63,47 @@ class NotesController {
     //Listando rota
 
     async index(request, response){
-        const {user_id} = request.query;
+        const {title, user_id, tags} = request.query;
+        let notes;
 
-        const notes = await knex("notes")
+        //Filtrando tag
+        if(tags) {
+            const filterTags = tags.split(','.map(tag => tag.trim()));
+        
+            notes = await knex("tags")
+
+            .select([
+
+                "notes.id",
+                "notes.title",
+               " notes.user.id",
+            ])
+        .where("notes_user_id", user_id)                     //InnerJoin
+        .whereLike("notes.title",`%${title}%`)
+        .whereIn("name", filterTags)
+        .innerJoin("notes", "notes.id", "tags.note_id")
+        .orderBy("notes.title")
+
+            .whereIn("name", filterTags)
+        }else{
+         notes = await knex("notes")
         .where({user_id})
+        .where("title", `%${title}%`) //Consulta por conteúdo do tipo title
         .orderBy("title");
+        }
 
-        return response.json(notes)
+        //Obtendo tags da nota
+
+        const userTags = await knex("tags").where({user_id});
+        const notesWidthTags = notes.map(note => {
+            const notesTags = userTags.filter(tag => tag.note_id === note_id);
+            return{
+                ...note,
+                tags: notesTags
+            }
+                })
+
+        return response.json(notesWidthTags)
 
 
 
@@ -76,3 +111,4 @@ class NotesController {
     }
 }
 module.exports = NotesController
+
